@@ -23,6 +23,8 @@ Powered by a modern, production-grade Python stack.
   - 🪙 `Rich Capy`
   - 🕷️ `Smart Spider`
 
+<img width="738" height="626" alt="image" src="https://github.com/user-attachments/assets/e7c61740-1c72-4676-8f58-650ba9329b33" />
+
 # Getting Started
 
 ### Run the application
