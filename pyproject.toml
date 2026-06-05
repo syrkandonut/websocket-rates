@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "aioweb"
+version = "0.1.0"
+description = ""
+authors = ["syrkandonut <jacob.888@mail.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+aiohttp = "^3.13.3"
+orjson = "^3.11.7"
+ruff = "^0.15.8"
+mypy = "^1.19.1"
+dishka = "^1.9.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

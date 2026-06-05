@@ -1,0 +1,9 @@
+[server]
+host = "localhost"
+port = 8000
+
+[resource]
+api = "https://open.er-api.com/v6/latest/"
+
+[rate]
+currency = "RUB"
