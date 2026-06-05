@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Service | Live</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;600;800&display=swap');
+
+        :root {
+            --grass-flash: #39b452;
+            --rose-flash: #cc2828;
+            --sun: #816613;
+            --clay: #545a5f;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: var(--clay);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .minimal-card {
+            background: #ffffff;
+            border-radius: 40px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.04);
+            width: 100%;
+            max-width: 400px;
+            padding: 3rem;
+            position: relative;
+        }
+
+        @keyframes flashUp {
+            0% {
+                color: var(--rose-flash);
+            }
+
+            100% {
+                color: var(--clay);
+            }
+        }
+
+        @keyframes flashDown {
+            0% {
+                color: var(--grass-flash);
+            }
+
+            100% {
+                color: var(--clay);
+            }
+        }
+
+        .rate-up {
+            animation: flashUp 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .rate-down {
+            animation: flashDown 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .nav-link {
+            font-size: 12px;
+            font-weight: 800;
+            color: #adb5bd;
+            position: relative;
+            padding-bottom: 4px;
+            transition: all 0.3s;
+        }
+
+        .nav-link.active {
+            color: var(--clay);
+            border-bottom: 2px solid var(--sun);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #51cf66;
+            margin-right: 8px;
+        }
+
+        .currency-header {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #ced4da;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .currency-header b {
+            color: var(--clay);
+            font-size: 1.9rem;
+        }
+
+        .author-sig {
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #adb5bd;
+            background: #f8f9fa;
+            padding: 4px 10px;
+            border-radius: 10px;
+            border: 1px solid #f1f3f5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="minimal-card">
+        <div class="flex justify-between items-center mb-10">
+            <div class="flex items-center text-[10px] font-extrabold uppercase tracking-widest text-[#adb5bd]">
+                <span class="status-dot animate-pulse"></span>
+                <span id="status-text">Live</span>
+            </div>
+            <div class="author-sig">by Syrkandonut</div>
+        </div>
+
+        <div class="mb-12">
+            <div class="currency-header mb-2">
+                <b id="currency-name">---</b> <span>/ RUB</span>
+            </div>
+            <div id="rate-container" class="overflow-hidden w-full h-[4.5rem] flex items-center justify-center">
+                <div id="rate-value" class="text-7xl font-extrabold tracking-tighter leading-none text-[#212529]">
+                    <svg id="rate-loader" class="animate-spin h-14 w-14 text-[#212529] opacity-40" xmlns="http://w3.org"
+                        fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3">
+                        </circle>
+                        <path class="opacity-80" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center border-t border-gray-50 pt-8 mb-6">
+            <div class="flex gap-6">
+                <a href="/USD" id="nav-USD" class="nav-link">USD</a>
+                <a href="/EUR" id="nav-EUR" class="nav-link">EUR</a>
+                <a href="/CNY" id="nav-CNY" class="nav-link">CNY</a>
+            </div>
+            <button onclick="location.reload()"
+                class="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center hover:bg-amber-100 active:scale-95 transition-all duration-200 shadow-sm border border-amber-100">
+                <i data-lucide="refresh-cw" class="w-3 h-3 text-amber-500 hover:text-amber-700 transition-colors"></i>
+            </button>
+        </div>
+
+        <div id="visitor-count" class="text-[10px] font-bold text-[#868e96] uppercase tracking-widest leading-relaxed">
+            Syncing...
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const currencyName = window.location.pathname.split('/').pop() || 'USD';
+        const rateEl = document.getElementById('rate-value');
+        const visitorEl = document.getElementById('visitor-count');
+        const statusText = document.getElementById('status-text');
+
+        document.getElementById('currency-name').innerText = currencyName.toUpperCase();
+        const activeNav = document.getElementById(`nav-${currencyName.toUpperCase()}`);
+        if (activeNav) activeNav.classList.add('active');
+
+        const ws = new WebSocket(`ws://${window.location.host}/ws/${currencyName}`);
+        let lastRate = 0;
+        let frameId = null;
+
+        ws.onmessage = (event) => {
+            const data = event.data;
+            try {
+                const json = JSON.parse(data);
+                if (json.type === 'rate') {
+                    if (frameId) cancelAnimationFrame(frameId);
+                    frameId = requestAnimationFrame(() => updateUI(json.value));
+                    return;
+                }
+                if (json.type === 'info') {
+                    visitorEl.innerHTML = json.content;
+                    return;
+                }
+            } catch (e) {
+                if (data.includes('Rate')) {
+                    const val = parseFloat(data.split(': ')[1]);
+                    if (frameId) cancelAnimationFrame(frameId);
+                    frameId = requestAnimationFrame(() => updateUI(val));
+                } else {
+                    visitorEl.innerHTML = data;
+                }
+            }
+        };
+
+        function updateUI(val) {
+            if (val === lastRate) return;
+
+            rateEl.classList.remove('rate-up', 'rate-down');
+            void rateEl.offsetWidth;
+
+            let colorClass = '';
+            if (lastRate !== 0) {
+                colorClass = val > lastRate ? 'rate-up' : (val < lastRate ? 'rate-down' : '');
+            }
+
+            rateEl.className = `text-7xl font-extrabold tracking-tighter leading-none ${colorClass}`;
+            rateEl.innerText = parseFloat(val).toFixed(4);
+            lastRate = val;
+        }
+
+        ws.onclose = () => {
+            statusText.innerText = 'No Signal';
+            document.querySelector('.status-dot').style.backgroundColor = '#dee2e6';
+            rateEl.style.opacity = '0.1';
+            visitorEl.innerText = 'Connection lost';
+        };
+    </script>
+</body>
+
+</html>
